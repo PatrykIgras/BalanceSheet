@@ -7,19 +7,28 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-public abstract class FinanceActivity {
+public class FinanceActivity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    protected int id;
-    protected LocalDateTime date;
-    protected double value;
+    private Integer id;
+    private LocalDateTime date;
+    private double value;
 
-    public int getId() {
+    public FinanceActivity() {
+    }
+
+    public FinanceActivity(Integer id, LocalDateTime date, double value) {
+        this.id = id;
+        this.date = date;
+        this.value = value;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -38,4 +47,6 @@ public abstract class FinanceActivity {
     public void setValue(double value) {
         this.value = value;
     }
+
+
 }

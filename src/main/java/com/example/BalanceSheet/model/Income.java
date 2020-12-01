@@ -1,6 +1,7 @@
 package com.example.BalanceSheet.model;
 
-import com.example.BalanceSheet.enums.*;
+import com.example.BalanceSheet.enums.IncomeType;
+
 import javax.persistence.Entity;
 
 @Entity
@@ -17,7 +18,7 @@ public class Income extends FinanceActivity {
                 "id = " + getId() +
                 ", date = " + getDate() +
                 ", value = " + getValue() +
-                ", incomeType = " + incomeType +
+                ", incomeType = " + incomeType.getiType() +
                 '}';
     }
 }
