@@ -5,59 +5,32 @@ import com.example.BalanceSheet.api.request.AddFinanceActivityRequest;
 import com.example.BalanceSheet.api.request.GetFinanceActivityRequest;
 import com.example.BalanceSheet.api.response.AddFinanceActivityResponse;
 import com.example.BalanceSheet.api.response.GetFinanceActivityResponse;
-import com.example.BalanceSheet.common.MsgSource;
-import com.example.BalanceSheet.enums.ExpenseType;
-import com.example.BalanceSheet.exception.CommonBadRequestException;
+import com.example.BalanceSheet.enums.FinanceActivityType;
 import com.example.BalanceSheet.model.Expense;
-import com.example.BalanceSheet.repository.ExpenseRepository;
 import com.example.BalanceSheet.service.FinanceActivityService;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.http.ResponseEntity;
 
-public class ExpenseServiceImpl implements FinanceActivityService {
-
-    private MsgSource msgSource;
-    private ExpenseRepository expenseRepository;
+public class ExpenseServiceImpl extends FinanceActivityServiceImpl implements FinanceActivityService {
 
     @Override
     public ResponseEntity<AddFinanceActivityResponse> addFinanceActivity(AddFinanceActivityRequest request) {
-        validateAddFinanceActivityRequest(request);
-        Expense expense = addExpenseToDB(request);
-        return ResponseEntity.ok(new AddFinanceActivityResponse("dodano wydaek", expense.getId()));
+        validateAddFinanceActivityRequest(request, FinanceActivityType.EXPENSE);
+        Expense expense = (Expense) addFinanceActivityToDB(request, FinanceActivityType.EXPENSE);
+        return ResponseEntity.ok(new AddFinanceActivityResponse(msgSource.OK001, expense.getId()));
     }
 
     @Override
     public ResponseEntity<GetFinanceActivityResponse> getFinanceActivity(GetFinanceActivityRequest request) {
-        return null;
+        Expense expense = (Expense) findFinanceActivityInDB(request, FinanceActivityType.EXPENSE);
+        return ResponseEntity.ok(new GetFinanceActivityResponse(msgSource.OK003, expense.getId(),
+                expense.getDate(), expense.getValue(), expense.getExpenseType().toString()));
     }
 
     @Override
-    public ResponseEntity<BasicResponse> deleteFinanceActivity(int id) {
-        return null;
+    public ResponseEntity<BasicResponse> deleteFinanceActivity(GetFinanceActivityRequest request) {
+        Expense expense = (Expense) findFinanceActivityInDB(request, FinanceActivityType.EXPENSE);
+        expenseRepository.deleteById(expense.getId());
+        return ResponseEntity.ok(new BasicResponse(msgSource.OK005));
     }
 
-    private void validateAddFinanceActivityRequest(AddFinanceActivityRequest request){
-        ExpenseType[] types = ExpenseType.values();
-        boolean validate = false;
-        for (ExpenseType type : types){
-            if (type.geteType().equals(request.getType())){
-                validate = true;
-                break;
-            }
-        }
-        if (!validate){
-            throw new CommonBadRequestException(msgSource.ERR002);
-        }
-    }
-
-    private Expense addExpenseToDB(AddFinanceActivityRequest request){
-        ExpenseType expenseType = ExpenseType.valueOf(request.getType());
-        Expense expense = new Expense(
-                null,
-                request.getDate(),
-                request.getValue(),
-                expenseType
-        );
-        return expenseRepository.save(expense);
-    }
 }

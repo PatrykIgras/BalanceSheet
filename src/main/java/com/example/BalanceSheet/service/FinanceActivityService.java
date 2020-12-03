@@ -11,5 +11,5 @@ public interface FinanceActivityService {
 
     ResponseEntity<AddFinanceActivityResponse> addFinanceActivity(AddFinanceActivityRequest request);
     ResponseEntity<GetFinanceActivityResponse> getFinanceActivity(GetFinanceActivityRequest request);
-    ResponseEntity<BasicResponse> deleteFinanceActivity(int id);
+    ResponseEntity<BasicResponse> deleteFinanceActivity(GetFinanceActivityRequest request);
 }
