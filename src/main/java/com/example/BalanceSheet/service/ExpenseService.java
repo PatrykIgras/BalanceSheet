@@ -7,9 +7,9 @@ import com.example.BalanceSheet.api.response.AddFinanceActivityResponse;
 import com.example.BalanceSheet.api.response.GetFinanceActivityResponse;
 import org.springframework.http.ResponseEntity;
 
-public interface FinanceActivityService {
+public interface ExpenseService {
 
-    ResponseEntity<AddFinanceActivityResponse> addFinanceActivity(AddFinanceActivityRequest request);
-    ResponseEntity<GetFinanceActivityResponse> getFinanceActivity(GetFinanceActivityRequest request);
-    ResponseEntity<BasicResponse> deleteFinanceActivity(GetFinanceActivityRequest request);
+    ResponseEntity<AddFinanceActivityResponse> addExpence(AddFinanceActivityRequest request);
+    ResponseEntity<GetFinanceActivityResponse> getExpence(GetFinanceActivityRequest request);
+    ResponseEntity<BasicResponse> deleteExpence(GetFinanceActivityRequest request);
 }
