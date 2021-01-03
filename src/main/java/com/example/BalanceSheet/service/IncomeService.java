@@ -10,6 +10,6 @@ import org.springframework.http.ResponseEntity;
 public interface IncomeService {
 
     ResponseEntity<AddFinanceActivityResponse> addIncome(AddFinanceActivityRequest request);
-    ResponseEntity<GetFinanceActivityResponse> getIncome(GetFinanceActivityRequest request);
-    ResponseEntity<BasicResponse> deleteIncome(GetFinanceActivityRequest request);
+    ResponseEntity<GetFinanceActivityResponse> getIncome(Integer id);
+    ResponseEntity<BasicResponse> deleteIncome(Integer id);
 }

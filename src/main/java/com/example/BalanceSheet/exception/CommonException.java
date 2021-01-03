@@ -3,7 +3,7 @@ package com.example.BalanceSheet.exception;
 import com.example.BalanceSheet.common.ConstErrorMsg;
 
 public class CommonException extends RuntimeException{
-    private ConstErrorMsg constErrorMsg;
+    private final ConstErrorMsg constErrorMsg;
 
     public CommonException(ConstErrorMsg constErrorMsg) {
         this.constErrorMsg = constErrorMsg;

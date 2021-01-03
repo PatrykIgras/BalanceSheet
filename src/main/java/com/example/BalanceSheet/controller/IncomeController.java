@@ -22,8 +22,8 @@ public class IncomeController {
         return incomeServiceImpl.addIncome(request);
     }
 
-    @GetMapping(value = "/get", produces = "application/json")
-    public ResponseEntity<GetFinanceActivityResponse> getIncome(@RequestParam GetFinanceActivityRequest request){
-        return incomeServiceImpl.getIncome(request);
+    @GetMapping(value = "/get/{incomeId}")
+    public ResponseEntity<GetFinanceActivityResponse> getIncome(@PathVariable Integer incomeId){
+        return incomeServiceImpl.getIncome(incomeId);
     }
 }

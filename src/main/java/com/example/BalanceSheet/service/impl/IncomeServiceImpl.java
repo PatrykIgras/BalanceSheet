@@ -20,8 +20,8 @@ import java.util.Optional;
 @Service
 public class IncomeServiceImpl implements IncomeService {
 
-    MsgSource msgSource;
-    IncomeRepository incomeRepository;
+    private MsgSource msgSource;
+    private IncomeRepository incomeRepository;
 
     public IncomeServiceImpl(MsgSource msgSource, IncomeRepository incomeRepository) {
         this.msgSource = msgSource;
@@ -36,23 +36,23 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
-    public ResponseEntity<GetFinanceActivityResponse> getIncome(GetFinanceActivityRequest request) {
-        Income income = (Income) findFinanceActivityInDB(request);
+    public ResponseEntity<GetFinanceActivityResponse> getIncome(Integer id) {
+        Income income = (Income) findFinanceActivityInDB(id);
         return ResponseEntity.ok(new GetFinanceActivityResponse(msgSource.OK004, income.getId(),
-                income.getDate(), income.getValue(), income.getIncomeType().toString()));
+                income.getDate(), income.getValue(), income.getIncomeType().getiType()));
     }
 
     @Override
-    public ResponseEntity<BasicResponse> deleteIncome(GetFinanceActivityRequest request) {
-        Income income = (Income) findFinanceActivityInDB(request);
+    public ResponseEntity<BasicResponse> deleteIncome(Integer id) {
+        Income income = (Income) findFinanceActivityInDB(id);
         incomeRepository.deleteById(income.getId());
         return ResponseEntity.ok(new BasicResponse(msgSource.OK006));
     }
 
-    Object findFinanceActivityInDB(GetFinanceActivityRequest request){
-        Optional<Income> optionalIncome = incomeRepository.findById(request.getId());
+    Object findFinanceActivityInDB(Integer id){
+        Optional<Income> optionalIncome = incomeRepository.findById(id);
         if (!optionalIncome.isPresent()) {
-            throw new CommonException(msgSource.ERR004);
+            throw new CommonBadRequestException(msgSource.ERR004);
         }
         return optionalIncome.get();
     }
@@ -61,7 +61,8 @@ public class IncomeServiceImpl implements IncomeService {
         boolean validate = false;
         IncomeType[] types = IncomeType.values();
         for (IncomeType iType : types) {
-            if (iType.getiType().equals(request.getType())) {
+            String value = iType.getiType();
+            if (value.equals(request.getType())) {
                 validate = true;
                 break;
             }
