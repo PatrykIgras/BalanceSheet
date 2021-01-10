@@ -2,6 +2,7 @@ package com.example.BalanceSheet.controller;
 
 import com.example.BalanceSheet.api.BasicResponse;
 import com.example.BalanceSheet.exception.CommonBadRequestException;
+import com.example.BalanceSheet.exception.CommonConflictException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +16,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseBody
     BasicResponse handleBadRequestException(CommonBadRequestException exception){
+        return BasicResponse.ofError(
+                exception.getConstErrorMsg().getErrorCode(),
+                exception.getConstErrorMsg().getErrorMsg()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler
+    @ResponseBody
+    BasicResponse handleBadRequestException(CommonConflictException exception){
         return BasicResponse.ofError(
                 exception.getConstErrorMsg().getErrorCode(),
                 exception.getConstErrorMsg().getErrorMsg()

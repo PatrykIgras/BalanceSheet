@@ -8,6 +8,7 @@ import com.example.BalanceSheet.api.response.GetFinanceActivityResponse;
 import com.example.BalanceSheet.common.MsgSource;
 import com.example.BalanceSheet.enums.IncomeType;
 import com.example.BalanceSheet.exception.CommonBadRequestException;
+import com.example.BalanceSheet.exception.CommonConflictException;
 import com.example.BalanceSheet.exception.CommonException;
 import com.example.BalanceSheet.model.Income;
 import com.example.BalanceSheet.repository.IncomeRepository;
@@ -44,15 +45,15 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity<BasicResponse> deleteIncome(Integer id) {
-        Income income = (Income) findFinanceActivityInDB(id);
-        incomeRepository.deleteById(income.getId());
+        findFinanceActivityInDB(id);
+        incomeRepository.deleteById(id);
         return ResponseEntity.ok(new BasicResponse(msgSource.OK006));
     }
 
-    Object findFinanceActivityInDB(Integer id){
+    Income findFinanceActivityInDB(Integer id){
         Optional<Income> optionalIncome = incomeRepository.findById(id);
         if (!optionalIncome.isPresent()) {
-            throw new CommonBadRequestException(msgSource.ERR004);
+            throw new CommonConflictException(msgSource.ERR004);
         }
         return optionalIncome.get();
     }

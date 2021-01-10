@@ -10,6 +10,6 @@ import org.springframework.http.ResponseEntity;
 public interface ExpenseService {
 
     ResponseEntity<AddFinanceActivityResponse> addExpence(AddFinanceActivityRequest request);
-    ResponseEntity<GetFinanceActivityResponse> getExpence(GetFinanceActivityRequest request);
-    ResponseEntity<BasicResponse> deleteExpence(GetFinanceActivityRequest request);
+    ResponseEntity<GetFinanceActivityResponse> getExpence(Integer id);
+    ResponseEntity<BasicResponse> deleteExpence(Integer id);
 }

@@ -7,11 +7,14 @@ import com.example.BalanceSheet.api.response.AddFinanceActivityResponse;
 import com.example.BalanceSheet.api.response.GetFinanceActivityResponse;
 import com.example.BalanceSheet.common.MsgSource;
 import com.example.BalanceSheet.enums.ExpenseType;
+import com.example.BalanceSheet.enums.IncomeType;
 import com.example.BalanceSheet.exception.CommonBadRequestException;
+import com.example.BalanceSheet.exception.CommonConflictException;
 import com.example.BalanceSheet.exception.CommonException;
 import com.example.BalanceSheet.model.Expense;
 import com.example.BalanceSheet.repository.ExpenseRepository;
 import com.example.BalanceSheet.service.ExpenseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +23,10 @@ import java.util.Optional;
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
 
-    MsgSource msgSource;
-    ExpenseRepository expenseRepository;
+    @Autowired
+    private MsgSource msgSource;
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
     @Override
     public ResponseEntity<AddFinanceActivityResponse> addExpence(AddFinanceActivityRequest request) {
@@ -31,23 +36,23 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public ResponseEntity<GetFinanceActivityResponse> getExpence(GetFinanceActivityRequest request) {
-        Expense expense = (Expense) findFinanceActivityInDB(request);
+    public ResponseEntity<GetFinanceActivityResponse> getExpence(Integer id) {
+        Expense expense = (Expense) findFinanceActivityInDB(id);
         return ResponseEntity.ok(new GetFinanceActivityResponse(msgSource.OK003, expense.getId(),
-                expense.getDate(), expense.getValue(), expense.getExpenseType().toString()));
+                expense.getDate(), expense.getValue(), expense.getExpenseType().geteType()));
     }
 
     @Override
-    public ResponseEntity<BasicResponse> deleteExpence(GetFinanceActivityRequest request) {
-        Expense expense = (Expense) findFinanceActivityInDB(request);
-        expenseRepository.deleteById(expense.getId());
+    public ResponseEntity<BasicResponse> deleteExpence(Integer id) {
+        findFinanceActivityInDB(id);
+        expenseRepository.deleteById(id);
         return ResponseEntity.ok(new BasicResponse(msgSource.OK005));
     }
 
-    Object findFinanceActivityInDB(GetFinanceActivityRequest request){
-            Optional<Expense> optionalExpense = expenseRepository.findById(request.getId());
+    Expense findFinanceActivityInDB(Integer id){
+            Optional<Expense> optionalExpense = expenseRepository.findById(id);
             if (!optionalExpense.isPresent()) {
-                throw new CommonException(msgSource.ERR003);
+                throw new CommonConflictException(msgSource.ERR003);
             }
         return optionalExpense.get();
     }
@@ -56,7 +61,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         boolean validate = false;
         ExpenseType[] types = ExpenseType.values();
         for (ExpenseType eType : types) {
-            if (eType.geteType().equals(request.getType())) {
+            String value = eType.geteType();
+            if (value.equals(request.getType())) {
                 validate = true;
                 break;
             }
@@ -67,7 +73,14 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     Object addFinanceActivityToDB(AddFinanceActivityRequest request){
-        ExpenseType expenseType = ExpenseType.valueOf(request.getType());
+        ExpenseType expenseType = null;
+        ExpenseType[] types = ExpenseType.values();
+        for (ExpenseType eType : types) {
+            if (eType.geteType().equals(request.getType())) {
+                expenseType = eType;
+                break;
+            }
+        }
         Expense expense = new Expense(
                 null,
                 request.getDate(),
